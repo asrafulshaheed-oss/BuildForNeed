@@ -1,0 +1,336 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Outfit", system-ui, -apple-system, sans-serif;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Smooth transition for theme switching without layout shifts */
+html, body, #root {
+  transition: background-color 0.3s ease, border-color 0.3s ease, text-decoration-color 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Hard dark-mode alignment for outermost rendering viewport boundaries (resolving Android swipe/overflow background leaking) */
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Hardware-accelerated native blurred image backdrop */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  background-image: url("./assets/images/torii_gate_sea.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(5px) saturate(115%) brightness(1.02); /* Less blur for pristine performance mapping light mode */
+  transform: scale(1.05); /* Prevent white border bleeding during blur */
+  opacity: 0.35;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-image 0.5s ease;
+}
+
+html.dark body::before {
+  background-image: url("./assets/images/dark.png");
+  opacity: 0.40;
+  filter: blur(3px) saturate(115%) brightness(1.02); /* Less blur for pristine performance mapping dark mode */
+}
+
+/* Semi-transparent adaptive responsive frosted glass color layout */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -9;
+  background-color: rgba(248, 250, 252, 0.4);
+  pointer-events: none;
+  transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.dark body::after {
+  background-color: rgba(6, 8, 22, 0.82);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom premium hover effects & transitions */
+.premium-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+}
+
+.premium-card-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+}
+
+/* Enforce layout overflow limits and stable container sizes on mobile */
+#app-main-layout-container {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: clamp(100%, 94vw, 1580px) !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 639px) {
+  #app-main-layout-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* Premium full-page mobile slide-in drawer layout to replace nested scroll boxes */
+.header-mobile-menu-container {
+  display: flex !important;
+  flex-direction: column !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 9999 !important;
+  overflow-y: auto !important;
+  overscroll-contain: contain !important;
+  box-sizing: border-box !important;
+  background-color: rgba(248, 250, 252, 0.98) !important; /* Constant stable high opacity background to prevent flashes */
+  -webkit-backdrop-filter: blur(8px) saturate(190%) !important; /* Constant stable low hardware-accelerated blur */
+  backdrop-filter: blur(8px) saturate(190%) !important; /* Constant stable low blur */
+  border-right: 1px solid rgba(226, 232, 240, 0.45) !important;
+  transform: translate3d(0, 0, 0) !important; /* Hardware acceleration layer */
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  will-change: transform, backdrop-filter !important;
+}
+
+html.dark .header-mobile-menu-container {
+  background-color: rgba(9, 13, 26, 0.99) !important; /* Constant stable high opacity background to prevent flashes */
+  -webkit-backdrop-filter: blur(8px) saturate(190%) !important;
+  backdrop-filter: blur(8px) saturate(190%) !important;
+  border-right: 1px solid rgba(51, 65, 85, 0.35) !important;
+}
+
+/* HIGH FIDELITY PROFESSIONAL POLISH & FROSTED GLASS THEME CLASSES */
+.glass-panel-premium {
+  background-color: rgba(255, 255, 255, 0.85) !important; /* Static alpha channel to prevent rendering flashes */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important; /* Optimized hardware-accelerated blur value */
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  border: 1px solid rgba(226, 232, 240, 0.55) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03) !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transform: translateZ(0) !important; /* Hardware-accelerated start */
+  will-change: transform;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+.glass-panel-premium:hover {
+  background-color: rgba(255, 255, 255, 0.85) !important; /* Static alpha channel preserved */
+  border-color: rgba(99, 102, 241, 0.25) !important; /* Subtle responsive border highlight */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important;
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  transform: translateZ(0) !important;
+}
+
+html.dark .glass-panel-premium {
+  background-color: rgba(15, 23, 42, 0.90) !important; /* Static alpha channel */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important;
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  border: 1px solid rgba(51, 65, 85, 0.45) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2) !important;
+  transform: translateZ(0) !important;
+  will-change: transform;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+html.dark .glass-panel-premium:hover {
+  background-color: rgba(15, 23, 42, 0.90) !important; /* Static alpha channel */
+  border-color: rgba(129, 140, 248, 0.20) !important; /* Subtle responsive border highlight */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important;
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  transform: translateZ(0) !important;
+}
+
+.glass-card-premium {
+  background-color: rgba(255, 255, 255, 0.85) !important; /* Static alpha channel to prevent rendering flashes */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important; /* Optimized blur value */
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  border: 1px solid rgba(226, 232, 240, 0.45) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transform: scale(1) translate3d(0, 0, 0) !important; /* Hardware-accelerated start */
+  will-change: transform;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+.glass-card-premium:hover {
+  background-color: rgba(255, 255, 255, 0.85) !important; /* Static alpha channel */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important;
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  transform: scale(1.005) translate3d(0, 0, 0) !important; /* Subtle hardware-accelerated scale hover */
+  box-shadow: 0 20px 40px -12px rgba(100, 116, 203, 0.09) !important;
+  border-color: rgba(99, 102, 241, 0.28) !important; /* Subtle responsive border highlight */
+}
+
+html.dark .glass-card-premium {
+  background-color: rgba(15, 23, 42, 0.90) !important; /* Static alpha channel */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important;
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  border: 1px solid rgba(51, 65, 85, 0.35) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.18) !important;
+  transform: scale(1) translate3d(0, 0, 0) !important;
+  will-change: transform;
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+}
+
+html.dark .glass-card-premium:hover {
+  background-color: rgba(15, 23, 42, 0.90) !important; /* Static alpha channel */
+  -webkit-backdrop-filter: blur(6px) saturate(180%) !important;
+  backdrop-filter: blur(6px) saturate(180%) !important;
+  transform: scale(1.005) translate3d(0, 0, 0) !important; /* Subtle hardware-accelerated scale hover */
+  border-color: rgba(129, 140, 248, 0.25) !important; /* Subtle responsive border highlight */
+  box-shadow: 0 20px 40px -12px rgba(129, 140, 248, 0.08) !important;
+}
+
+.glass-input-premium {
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(226, 232, 240, 0.7) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.glass-input-premium:focus {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(99, 102, 241, 0.8) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12) !important;
+  outline: none !important;
+}
+
+html.dark .glass-input-premium {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+  border: 1px solid rgba(51, 65, 85, 0.55) !important;
+}
+
+html.dark .glass-input-premium:focus {
+  background-color: rgba(15, 23, 42, 0.75) !important;
+  border-color: rgba(129, 140, 248, 0.8) !important;
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.18) !important;
+  outline: none !important;
+}
+
+/* Elegant Sub-pixel borders & text gradients */
+.gradient-text-indigo-slate {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #4338ca 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html.dark .gradient-text-indigo-slate {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #c7d2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Delicate neon halo accents */
+.neon-halo-glow {
+  position: relative;
+}
+
+.neon-halo-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(244, 63, 94, 0.25));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.neon-halo-glow:hover::before {
+  opacity: 1;
+}
+
+/* Super smooth customized premium scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.45);
+}
+
+/* Ensure smooth, independent scrolling across all browsers and platforms without layout shifting */
+.scrolls-custom {
+  overscroll-behavior-y: contain !important;
+  scrollbar-gutter: stable !important;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}
+
+/* Glass look for select option and dropdowns */
+select option {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html.dark select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* Consolidated mobile menu drawer rules successfully */
+
+

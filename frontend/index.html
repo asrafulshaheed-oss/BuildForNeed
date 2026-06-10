@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Build  for  Need</title>
+    <script>
+      // Safe global and fetch setter override to resolve browser platform iframe constraints
+      (function() {
+        var _customFetch = window.fetch;
+        try {
+          Object.defineProperty(window, 'fetch', {
+            get: function() { return _customFetch; },
+            set: function(v) { _customFetch = v; },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          // If native fetch is not configurable, we safe-trap it via global proxy
+        }
+
+        var customStored = {
+          fetch: _customFetch
+        };
+
+        var safeGlobal = new Proxy(customStored, {
+          set: function(target, prop, value) {
+            target[prop] = value;
+            if (prop === 'fetch') {
+              _customFetch = value;
+            } else {
+              try {
+                window[prop] = value;
+              } catch (e) {
+                // Safe fall-through
+              }
+            }
+            return true;
+          },
+          get: function(target, prop) {
+            if (prop === 'fetch') {
+              return _customFetch;
+            }
+            if (prop in target) {
+              return target[prop];
+            }
+            var val = window[prop];
+            if (typeof val === 'function') {
+              try {
+                return val.bind(window);
+              } catch (e) {
+                return val;
+              }
+            }
+            return val;
+          },
+          has: function(target, prop) {
+            return prop in target || prop in window;
+          }
+        });
+
+        try {
+          Object.defineProperty(window, 'global', {
+            value: safeGlobal,
+            writable: true,
+            configurable: true
+          });
+        } catch (e) {
+          window.global = safeGlobal;
+        }
+
+        try {
+          Object.defineProperty(window, 'globalThis', {
+            value: safeGlobal,
+            writable: true,
+            configurable: true
+          });
+        } catch (e) {
+          window.globalThis = safeGlobal;
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
